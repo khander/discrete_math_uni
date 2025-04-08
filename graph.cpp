@@ -3,13 +3,30 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <string>
+
+struct Joint;
+
+struct Link{
+    Joint* from;
+    Joint* to;
+    int weight;
+};
+
+struct Joint{
+    char node_name;
+    int number;
+    std::vector<Link*> links;
+};
 
 class Graph{
 private:
-std::vector<std::vector<int>> matrix;
-std::vector<std::vector<int>> incident_id;
-std::vector<std::vector<int>> incident_matrix;
-std::vector<int> joint_links;
+    std::vector<std::vector<int>> matrix;
+    std::vector<std::vector<int>> incident_id;
+    std::vector<std::vector<int>> incident_matrix;
+    std::vector<Joint*> linked_graph_joints;
+    std::vector<int> joint_links;
+    //Joint* head_joint;
 public:
     void width_traversal();
     void print_main_matrix();
@@ -17,12 +34,32 @@ public:
     int get_links_amount();
     bool check_if_euler();
     void udate_by_upper_part();
+    void create_linked_graph();
     
     std::vector<int> get_joint_links_amount();
 
     Graph(const std::vector<std::vector<int>>& array);
     friend std::ostream& operator<<(std::ostream&, const std::vector<std::vector<int>>& vec);
 };
+
+void Graph::create_linked_graph(){
+    for(int count = 0;count < matrix.size(); count++){
+        Joint* joint = new Joint;
+        joint->number = count;
+        joint->node_name = 'A' + count;
+        linked_graph_joints.push_back(joint);
+    }
+    for(int count = 0; count < matrix.size(); count++){
+        for(int i = 0; i < matrix.size(); i++){
+            if(matrix[count][i] > 0){
+                linked_graph_joints[count]->links.push_back(new Link{linked_graph_joints[count], linked_graph_joints[count], matrix[count][i]});
+                printf("link created\n");
+            }
+        }
+
+    }
+    //printf("%c", head_joint->node_name);
+}
 
 Graph::Graph(const std::vector<std::vector<int>>& array){
     matrix = array;
@@ -46,6 +83,8 @@ Graph::Graph(const std::vector<std::vector<int>>& array){
         temp_vec_for_incident_matrix[incident_id[1][i]][i] = 1;
     }
     incident_matrix = temp_vec_for_incident_matrix;
+
+    create_linked_graph();
 };
 
 void Graph::print_main_matrix(){
@@ -110,7 +149,7 @@ void Graph::udate_by_upper_part(){
     }
 }
 
-void Graph::width_traversal(){
+/* void Graph::width_traversal(){
     std::vector<int> ban_list(matrix.size(), 0);
     std::vector<int> current_list(matrix.size(), 0);
     std::vector<int> new_list(matrix.size(), 0);
@@ -139,4 +178,4 @@ void Graph::width_traversal(){
 //    std::cout << "[" << incident_id[0][0] << "]" << std::endl;
 //    ban_list[counter++] = incident_id[0][0];
 
-}
+} */

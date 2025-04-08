@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/khaus/discrete",
-      "program": "c:/Users/khaus/discrete/build/Debug/outDebug",
+      "cwd": "c:/programming/discrete_math_uni",
+      "program": "c:/programming/discrete_math_uni/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
