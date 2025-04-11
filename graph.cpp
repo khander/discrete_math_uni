@@ -29,13 +29,16 @@ private:
     //Joint* head_joint;
 public:
     void width_traversal();
+    void painting();
     void print_main_matrix();
     void print_incident_matrix();
     int get_links_amount();
     bool check_if_euler();
     void udate_by_upper_part();
     void create_linked_graph();
-    
+    int get_links_amount(int);      // for established index
+    bool check_if_incident(int,int);
+
     std::vector<int> get_joint_links_amount();
 
     Graph(const std::vector<std::vector<int>>& array);
@@ -61,9 +64,83 @@ void Graph::create_linked_graph(){
     //printf("%c", head_joint->node_name);
 }
 
+int Graph::get_links_amount(int x){
+    int counter = 0;
+    for (int i = 0; i < matrix.size(); i++){
+        if(matrix[x][i] > 0)
+            counter++;
+    }
+    return counter;
+}
+
+void Graph::painting(){
+    std::vector<std::vector<int>> temp_vec_for_painting(2, std::vector<int>(matrix.size(), 0));
+    for (int i = 0; i < temp_vec_for_painting[0].size(); i++){
+        temp_vec_for_painting[0][i] = i;
+        temp_vec_for_painting[1][i] = get_links_amount(i);
+    }
+    
+    std::vector<std::vector<int>> transposed(temp_vec_for_painting[0].size(), std::vector<int>(2));
+    for (int i = 0; i < temp_vec_for_painting[0].size(); ++i) {
+        transposed[i][0] = temp_vec_for_painting[0][i];
+        transposed[i][1] = temp_vec_for_painting[1][i];
+    }
+
+    std::sort(transposed.begin(), transposed.end(), [](const std::vector<int>& a, const std::vector<int>& b) {
+        return a[1] > b[1];
+    });
+
+    for (int i = 0; i < temp_vec_for_painting[0].size(); ++i) {
+        temp_vec_for_painting[0][i] = transposed[i][0]; 
+        temp_vec_for_painting[1][i] = transposed[i][1];
+    }
+
+    for (int i = 0; i < temp_vec_for_painting.size(); i++){
+        for (int j = 0; j < temp_vec_for_painting[0].size(); j++){
+            std::cout << temp_vec_for_painting[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::vector<std::vector<int>> paint(5, std::vector<int>(0));
+//version brut
+    
+    int current_paint = 0;
+    int counter = 0;
+
+    while(temp_vec_for_painting[0].size() > 0){
+        int counter = 0;
+        bool flag = 0;
+        paint[current_paint].push_back(temp_vec_for_painting[0][0]);
+        temp_vec_for_painting[0].erase(temp_vec_for_painting[0].begin());
+        temp_vec_for_painting[1].erase(temp_vec_for_painting[1].begin());
+        while(counter < temp_vec_for_painting[0].size()){
+            bool inner_flag = 0;
+            for (int i = 0; i < paint[current_paint].size(); i++){
+                if (!check_if_incident(temp_vec_for_painting[0][counter], paint[current_paint][i]))
+                    inner_flag = 1;
+            }
+            if(!inner_flag){
+                paint[current_paint].push_back(temp_vec_for_painting[0][counter]);
+                temp_vec_for_painting[0].erase(temp_vec_for_painting[0].begin());
+                temp_vec_for_painting[1].erase(temp_vec_for_painting[1].begin());
+            }
+
+        }
+
+
+        
+
+    }
+}
+
+bool Graph::check_if_incident(int a, int b){
+    return matrix[a][b];
+}
+
 Graph::Graph(const std::vector<std::vector<int>>& array){
     matrix = array;
-    udate_by_upper_part();
+//    udate_by_upper_part();
     joint_links = get_joint_links_amount();
     std::vector<std::vector<int>> temp_vec_for_incident_id(2, std::vector<int>(get_links_amount(), 0));
     int count = get_links_amount();

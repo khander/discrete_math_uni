@@ -22,5 +22,7 @@ int main(){
     //std::vector<int> jj = graph.get_joint_links_amount();
     //cout<< jj[2] << endl;
     cout<< graph.check_if_euler() << endl;
+
+    graph.painting();
     return 0;
 }
