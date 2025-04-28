@@ -128,7 +128,7 @@ void Graph::painting(){
 
         }
 
-
+            //to do : finish function
         
 
     }
